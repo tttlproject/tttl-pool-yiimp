@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/tpruvot/yiimp.svg?branch=next)](https://travis-ci.org/tpruvot/yiimp)
-
 #yiimp - yaamp fork
 
 WARNINGS
@@ -116,22 +114,3 @@ And finally remove the IP filter check in SiteController.php
 
 
 There are logs generated in the /var/stratum folder and /var/log/stratum/debug.log for the php log.
-
-More instructions coming as needed.
-
-
-There a lot of unused code in the php branch. Lot come from other projects I worked on and I've been lazy to clean it up before to integrate it to yaamp. It's mostly based on the Yii framework which implements a lightweight MVC.
-
-	http://www.yiiframework.com/
-
-
-Credits:
-
-Thanks to globalzon to have released the initial Yaamp source code.
-
---
-
-You can support this project donating to tpruvot :
-
-BTC : 1Auhps1mHZQpoX4mCcVL8odU81VakZQ6dR
-
