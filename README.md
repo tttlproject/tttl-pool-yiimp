@@ -1,4 +1,4 @@
-#yiimp - yaamp fork
+#This is a yiimp - yaamp fork. Original project: https://github.com/tpruvot/yiimp 
 
 WARNINGS
 - Use at your own risks.
