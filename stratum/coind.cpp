@@ -116,7 +116,7 @@ bool coind_validate_address(YAAMP_COIND *coind)
 	sprintf(params, "[\"%s\"]", coind->wallet);
 
 	json_value *json;
-	bool getaddressinfo = ((strcmp(coind->symbol,"DGB") == 0) || (strcmp(coind->symbol2, "DGB") == 0));
+	bool getaddressinfo = ((strcmp(coind->symbol,"DGB") == 0) || (strcmp(coind->symbol2, "DGB") == 0) || (strcmp(coind->symbol2, "TTTL") == 0));
 	if(getaddressinfo)
 		json = rpc_call(&coind->rpc, "getaddressinfo", params);
 	else
@@ -161,12 +161,6 @@ bool coind_validate_address(YAAMP_COIND *coind)
 	}
 	json_value_free(json);
 
-	stratumlog("coind_validate_address - isvalid: %s\n",isvalid ? "true":"false");
-	stratumlog("coind_validate_address - ismine: %s\n",ismine ? "true":"false");
-	if(strcmp(coind->symbol, "JUC") == 0) {
-		return isvalid;
-	}
-
 	return isvalid && ismine;
 }
 
@@ -196,7 +190,7 @@ void coind_init(YAAMP_COIND *coind)
 
 	char apicall[YAAMP_SMALLBUFSIZE];
 	
-	if(strcmp(coind->symbol, "JUC") == 0) {
+	if(strcmp(coind->symbol, "TTTL") == 0) {
 		sprintf(apicall, "%s", "listreceivedbyaddress");
 		sprintf(params, "[%s]", "1, true");
 	}else{
@@ -225,7 +219,7 @@ void coind_init(YAAMP_COIND *coind)
 		}
 	}
 
-	if(strcmp(coind->symbol, "JUC") == 0) {
+	if(strcmp(coind->symbol, "TTTL") == 0) {
 		stratumlog("coind_init - Retrived return object json %s %s\n", apicall, coind->name);
 		if (json->type == json_object){
 			int length, x;
@@ -257,7 +251,7 @@ void coind_init(YAAMP_COIND *coind)
 			std::time_t t = std::time(0);
 
 			strcpy(apicall, "getnewaddress");
-			sprintf(params, "[\"june-address-%ld\",\"legacy\"]",t);
+			sprintf(params, "[\"tttl-address-%ld\",\"legacy\"]",t);
 
 			stratumlog("coind_init - apicall: %s\n", apicall);
 			stratumlog("coind_init - params: %s\n", params);

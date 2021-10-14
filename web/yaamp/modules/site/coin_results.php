@@ -6,7 +6,7 @@ if (!$coin) $this->goback();
 $PoS = ($coin->algo == 'PoS'); // or if 'stake' key is present in 'getinfo' method
 $DCR = ($coin->rpcencoding == 'DCR' || $coin->getOfficialSymbol() == 'DCR');
 $DGB = ($coin->rpcencoding == 'DGB' || $coin->getOfficialSymbol() == 'DGB');
-$JUC = ($coin->rpcencoding == 'JUC' || $coin->getOfficialSymbol() == 'JUC');
+$JUC = ($coin->rpcencoding == 'TTTL' || $coin->getOfficialSymbol() == 'TTTL');
 $ETH = ($coin->rpcencoding == 'GETH');
 
 $remote = new WalletRPC($coin);
