@@ -58,6 +58,7 @@ if (!defined('YAAMP_SITE_NAME')) define('YAAMP_SITE_NAME', 'YiiMP');
 if (!defined('YAAMP_DEFAULT_ALGO')) define('YAAMP_DEFAULT_ALGO', 'x11');
 if (!defined('YAAMP_ADMIN_EMAIL')) define('YAAMP_ADMIN_EMAIL', 'yiimp@spam.la');
 if (!defined('YAAMP_ADMIN_IP')) define('YAAMP_ADMIN_IP', '127.0.0.1');
+if (!defined('YAAMP_ADMIN_SC')) define('YAAMP_ADMIN_SC', 'This is an secret');
 if (!defined('YAAMP_ADMIN_WEBCONSOLE')) define('YAAMP_ADMIN_WEBCONSOLE', true);
 
 if (!defined('YAAMP_CREATE_NEW_COINS')) define('YAAMP_CREATE_NEW_COINS', true);

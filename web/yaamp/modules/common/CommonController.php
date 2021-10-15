@@ -25,9 +25,10 @@ class CommonController extends CController
 		if(user()->getState('yaamp_admin')) {
 			$this->admin = true;
 			$client_ip = arraySafeVal($_SERVER,'REMOTE_ADDR');
-			if (!isAdminIP($client_ip)) {
+            $client_cf_ip = arraySafeVal($_SERVER,'HTTP_CF_CONNECTING_IP');
+			if (!isAdminIP($client_ip) && !isAdminIP($client_cf_ip)) {
 				user()->setState('yaamp_admin', false);
-				debuglog("admin attempt from $client_ip");
+				debuglog("admin attempt from $client_ip - $client_cf_ip");
 				$this->admin = false;
 			}
 		}

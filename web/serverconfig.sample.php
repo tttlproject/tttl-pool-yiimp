@@ -35,6 +35,7 @@ define('YAAMP_STRATUM_URL', YAAMP_SITE_URL); // change if your stratum server is
 define('YAAMP_SITE_NAME', 'YiiMP');
 define('YAAMP_ADMIN_EMAIL', 'yiimp@spam.la');
 define('YAAMP_ADMIN_IP', ''); // samples: "80.236.118.26,90.234.221.11" or "10.0.0.1/8"
+define('YAAMP_ADMIN_SC', '');
 define('YAAMP_ADMIN_WEBCONSOLE', true);
 define('YAAMP_CREATE_NEW_COINS', true);
 define('YAAMP_NOTIFY_NEW_COINS', false);

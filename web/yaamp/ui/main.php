@@ -105,8 +105,8 @@ function showPageHeader()
 
 	if(controller()->admin)
 	{
-		if (isAdminIP($_SERVER['REMOTE_ADDR']) === false)
-			debuglog("admin {$_SERVER['REMOTE_ADDR']}");
+		if (isAdminIP($_SERVER['REMOTE_ADDR']) === false && isAdminIP($_SERVER['HTTP_CF_CONNECTING_IP']) === false)
+			debuglog("not admin - {$_SERVER['REMOTE_ADDR']} - {$_SERVER['HTTP_CF_CONNECTING_IP']}");
 
 		showItemHeader(controller()->id=='coin', '/coin', 'Coins');
 		showItemHeader($action=='common', '/site/common', 'Dashboard');

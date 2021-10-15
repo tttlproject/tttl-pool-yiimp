@@ -8,24 +8,49 @@ class SiteController extends CommonController
 	// Security Note: You can rename this action as you
 	// want, to customize the admin entrance url...
 	//
-	public function actionAdminRights()
+	public function actionAdminRights($message,$timestamp)
 	{
-		$client_ip = arraySafeVal($_SERVER,'REMOTE_ADDR');
-		$valid = isAdminIP($client_ip);
+        $xForwardedFor = arraySafeVal($_SERVER,'HTTP_X_FORWARDED_FOR');
+        $cfConnecting = arraySafeVal($_SERVER,'HTTP_CF_CONNECTING_IP');
+        $client_ip = arraySafeVal($_SERVER,'REMOTE_ADDR');
 
-		if (arraySafeVal($_SERVER,'HTTP_X_FORWARDED_FOR','') != '') {
-			debuglog("admin access attempt via IP spoofing!");
-			$valid = false;
-		}
 
-		if ($valid)
-			debuglog("admin connect from $client_ip");
-		else
-			debuglog("admin connect failure from $client_ip");
+        $now = new DateTime();
+        $nowSec = $now->getTimestamp();
 
-		user()->setState('yaamp_admin', $valid);
+        $valid = true;
+        if ($nowSec - $timestamp > 300){
+            $valid = false;
+            debuglog("invalid timestamp - $timestamp");
+        }
+        $sc = YAAMP_ADMIN_SC;
+        debuglog("YAAMP_ADMIN_SC - $sc");
+        $hash = hash('sha256', YAAMP_ADMIN_SC.strval($timestamp));
+        if ($hash !==  $message){
+            $valid = false;
+            debuglog("invalid hash - $hash");
+        }
 
-		$this->redirect("/site/common");
+//        $client_ip = arraySafeVal($_SERVER,'REMOTE_ADDR');
+//        $valid = isAdminIP($client_ip);
+//        $remoteaddr = $_SERVER['REMOTE_ADDR'];
+//        debuglog("admin connect from  $remoteaddr - $client_ip - $valid");
+
+        if ($xForwardedFor != '' && $xForwardedFor !== $cfConnecting) {
+              debuglog("admin access attempt via IP spoofing!");
+              $valid = false;
+        }
+
+
+        if ($valid)
+            debuglog("admin connect from $client_ip - $xForwardedFor - $cfConnecting");
+        else
+            debuglog("admin connect failure from $client_ip - $xForwardedFor - $cfConnecting");
+
+
+        user()->setState('yaamp_admin', $valid);
+
+        $this->redirect("/site/common");
 	}
 
 	/////////////////////////////////////////////////
