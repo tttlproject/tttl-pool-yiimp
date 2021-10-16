@@ -25,3 +25,4 @@ web/yaamp/.idea/
 *.0
 *.DS_Store
 .vscode
+.idea

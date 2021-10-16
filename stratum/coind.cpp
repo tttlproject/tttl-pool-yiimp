@@ -113,14 +113,20 @@ bool coind_validate_address(YAAMP_COIND *coind)
 	if(!coind->wallet[0]) return false;
 
 	char params[YAAMP_SMALLBUFSIZE];
+    char apicall[YAAMP_SMALLBUFSIZE];
 	sprintf(params, "[\"%s\"]", coind->wallet);
 
 	json_value *json;
-	bool getaddressinfo = ((strcmp(coind->symbol,"DGB") == 0) || (strcmp(coind->symbol2, "DGB") == 0) || (strcmp(coind->symbol2, "TTTL") == 0));
+	bool getaddressinfo = ((strcmp(coind->symbol,"DGB") == 0) || (strcmp(coind->symbol2, "DGB") == 0) || (strcmp(coind->symbol, "TTTL") == 0));
 	if(getaddressinfo)
-		json = rpc_call(&coind->rpc, "getaddressinfo", params);
+        sprintf(apicall, "%s", "getaddressinfo");
 	else
-		json = rpc_call(&coind->rpc, "validateaddress", params);
+        sprintf(apicall, "%s", "validateaddress");
+
+    stratumlog("coind_validate_address - apicall: %s\n", apicall);
+    stratumlog("coind_validate_address - params: %s\n", params);
+
+    json = rpc_call(&coind->rpc, apicall, params);
 	if(!json) return false;
 
 	json_value *json_result = json_get_object(json, "result");
@@ -132,6 +138,8 @@ bool coind_validate_address(YAAMP_COIND *coind)
 
 	bool isvalid = getaddressinfo || json_get_bool(json_result, "isvalid");
 	if(!isvalid) stratumlog("%s wallet %s is not valid.\n", coind->name, coind->wallet);
+
+
 
 	bool ismine = json_get_bool(json_result, "ismine");
 	if(!ismine) stratumlog("%s wallet %s is not mine.\n", coind->name, coind->wallet);
@@ -200,11 +208,7 @@ void coind_init(YAAMP_COIND *coind)
 	stratumlog("coind_init - apicall: %s\n", apicall);
 	stratumlog("coind_init - params: %s\n", params);
 
-
-
-	sprintf(params, "[\"%s\"]", account);
-
-	json_value *json = rpc_call(&coind->rpc, "getaccountaddress", params);
+	json_value *json = rpc_call(&coind->rpc, apicall, params);
 	if(!json)
 	{
 		json = rpc_call(&coind->rpc, "getaddressesbyaccount", params);
@@ -221,13 +225,15 @@ void coind_init(YAAMP_COIND *coind)
 
 	if(strcmp(coind->symbol, "TTTL") == 0) {
 		stratumlog("coind_init - Retrived return object json %s %s\n", apicall, coind->name);
-		if (json->type == json_object){
+
+        if (json->type == json_object){
 			int length, x;
 			length = json->u.object.length;
 			for (x = 0; x < length; x++) {
 				stratumlog("object[%d].name = %s\n", x, json->u.object.values[x].name);
+				stratumlog("object[%d].value = %s\n", x, json->u.object.values[x].value);
 				if(strcmp(json->u.object.values[x].name, "result") == 0){
-					if (json_is_array(json->u.object.values[x].value)){
+					if (json->u.object.values[x].value->type == json_array){
 						stratumlog("coind_init - %s - %s - Retrived return array json  \n", coind->name, apicall);
 						int arrlength = json->u.object.values[x].value->u.array.length;
 						if (arrlength>0){
@@ -240,6 +246,8 @@ void coind_init(YAAMP_COIND *coind)
 						}else{
 							stratumlog("coind_init - %s - %s - Retrived empty array address  \n", coind->name, apicall);
 						}
+					}else{
+					    stratumlog("result is not array!!!!!\n");
 					}
 					break;
 				}
@@ -272,7 +280,8 @@ void coind_init(YAAMP_COIND *coind)
 					if(strcmp(json->u.object.values[x].name, "result") == 0){
 						if (json->u.object.values[x].value->type == json_string) {
 							strcpy(coind->wallet, json->u.object.values[0].value->u.string.ptr);
-						}
+                            stratumlog("New adress: %s\n", coind->wallet);
+                        }
 						break;
 					}
 				}
@@ -283,7 +292,7 @@ void coind_init(YAAMP_COIND *coind)
 			stratumlog("ERROR3 %s %s\n", apicall, coind->name);
 			return;
 		}else{
-			stratumlog("New adress: %s\n", coind->wallet);			
+			stratumlog("wallet adress: %s\n", coind->wallet);
 		}
 
 
@@ -299,7 +308,12 @@ void coind_init(YAAMP_COIND *coind)
 
 	json_value_free(json);
 
-	coind_validate_address(coind);
+    valid = coind_validate_address(coind);
+    if(valid){
+        debuglog(">>>>>>>>>>>>>>>>>>>> Coind valid\n");
+    }else{
+        debuglog(">>>>>>>>>>>>>>>>>>>> Coind invalid\n");
+    }
 	if (strlen(coind->wallet)) {
 		debuglog(">>>>>>>>>>>>>>>>>>>> using wallet %s %s\n",
 			coind->wallet, coind->account);
@@ -311,7 +325,7 @@ char *parseAdress(json_value* addrrObj){
 		int length, x;
 		length = addrrObj->u.object.length;
 		for (x = 0; x < length; x++) {
-			stratumlog("addrrObj[%d].name = %s\n", x, addrrObj->u.object.values[x].name);
+//			stratumlog("addrrObj[%d].name = %s\n", x, addrrObj->u.object.values[x].name);
 			if(strcmp(addrrObj->u.object.values[x].name, "address") == 0){
 				if (addrrObj->u.object.values[x].value->type == json_string) {
 					return addrrObj->u.object.values[x].value->u.string.ptr;
